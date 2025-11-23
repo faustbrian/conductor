@@ -1,0 +1,307 @@
+<?php declare(strict_types=1);
+
+namespace Tests\Unit\Database\Concerns;
+
+use Cline\Sequencer\Database\Concerns\HasSequencerPrimaryKey;
+use Cline\Sequencer\Exceptions\InvalidPrimaryKeyValueException;
+use Illuminate\Database\Eloquent\Model;
+use Tests\TestCase;
+
+class HasSequencerPrimaryKeyTest extends TestCase
+{
+
+    // ID Type Tests
+    public function testGetIncrementingReturnsTrueForIdType(): void
+    {
+        // Arrange
+        config(['sequencer.primary_key_type' => 'id']);
+        $model = new class extends Model {
+            use HasSequencerPrimaryKey;
+        };
+
+        // Act
+        $result = $model->getIncrementing();
+
+        // Assert
+        $this->assertTrue($result);
+    }
+
+    public function testGetKeyTypeReturnsIntForIdType(): void
+    {
+        // Arrange
+        Config::set('sequencer.primary_key_type', 'id');
+        $model = new class extends Model {
+            use HasSequencerPrimaryKey;
+        };
+
+        // Act
+        $result = $model->getKeyType();
+
+        // Assert
+        $this->assertSame('int', $result);
+    }
+
+    public function testUniqueIdsReturnsEmptyArrayForIdType(): void
+    {
+        // Arrange
+        Config::set('sequencer.primary_key_type', 'id');
+        $model = new class extends Model {
+            use HasSequencerPrimaryKey;
+        };
+
+        // Act
+        $result = $model->uniqueIds();
+
+        // Assert
+        $this->assertSame([], $result);
+    }
+
+    public function testNewUniqueIdReturnsNullForIdType(): void
+    {
+        // Arrange
+        Config::set('sequencer.primary_key_type', 'id');
+        $model = new class extends Model {
+            use HasSequencerPrimaryKey;
+        };
+
+        // Act
+        $result = $model->newUniqueId();
+
+        // Assert
+        $this->assertNull($result);
+    }
+
+    // ULID Type Tests
+    public function testGetIncrementingReturnsFalseForUlidType(): void
+    {
+        // Arrange
+        Config::set('sequencer.primary_key_type', 'ulid');
+        $model = new class extends Model {
+            use HasSequencerPrimaryKey;
+        };
+
+        // Act
+        $result = $model->getIncrementing();
+
+        // Assert
+        $this->assertFalse($result);
+    }
+
+    public function testGetKeyTypeReturnsStringForUlidType(): void
+    {
+        // Arrange
+        Config::set('sequencer.primary_key_type', 'ulid');
+        $model = new class extends Model {
+            use HasSequencerPrimaryKey;
+        };
+
+        // Act
+        $result = $model->getKeyType();
+
+        // Assert
+        $this->assertSame('string', $result);
+    }
+
+    public function testUniqueIdsReturnsKeyNameArrayForUlidType(): void
+    {
+        // Arrange
+        Config::set('sequencer.primary_key_type', 'ulid');
+        $model = new class extends Model {
+            use HasSequencerPrimaryKey;
+        };
+
+        // Act
+        $result = $model->uniqueIds();
+
+        // Assert
+        $this->assertSame(['id'], $result);
+    }
+
+    public function testNewUniqueIdGeneratesValidUlid(): void
+    {
+        // Arrange
+        Config::set('sequencer.primary_key_type', 'ulid');
+        $model = new class extends Model {
+            use HasSequencerPrimaryKey;
+        };
+
+        // Act
+        $result = $model->newUniqueId();
+
+        // Assert
+        $this->assertIsString($result);
+        $this->assertSame(26, strlen($result));
+        $this->assertMatchesRegularExpression('/^[0123456789abcdefghjkmnpqrstvwxyz]{26}$/', $result);
+    }
+
+    public function testBootSetsUlidIfNotProvidedOnCreating(): void
+    {
+        // Arrange
+        Config::set('sequencer.primary_key_type', 'ulid');
+        $model = new class extends Model {
+            use HasSequencerPrimaryKey;
+
+            protected $fillable = ['name'];
+        };
+
+        // Act
+        $model->fireModelEvent('creating');
+
+        // Assert
+        $this->assertIsString($model->getKey());
+        $this->assertSame(26, strlen($model->getKey()));
+    }
+
+    public function testBootAcceptsPresetUlidString(): void
+    {
+        // Arrange
+        Config::set('sequencer.primary_key_type', 'ulid');
+        $presetUlid = '01hqz8x9v5k3j2m1n0p9q8r7s6';
+        $model = new class extends Model {
+            use HasSequencerPrimaryKey;
+
+            protected $fillable = ['name'];
+        };
+        $model->setAttribute('id', $presetUlid);
+
+        // Act
+        $model->fireModelEvent('creating');
+
+        // Assert
+        $this->assertSame($presetUlid, $model->getKey());
+    }
+
+    public function testBootThrowsExceptionForNonStringUlid(): void
+    {
+        // Arrange
+        Config::set('sequencer.primary_key_type', 'ulid');
+        $model = new class extends Model {
+            use HasSequencerPrimaryKey;
+
+            protected $fillable = ['name'];
+        };
+        $model->setAttribute('id', 12345);
+
+        // Act & Assert
+        $this->expectException(InvalidPrimaryKeyValueException::class);
+        $this->expectExceptionMessage('Cannot assign non-string value to ULID primary key');
+        $model->fireModelEvent('creating');
+    }
+
+    // UUID Type Tests
+    public function testGetIncrementingReturnsFalseForUuidType(): void
+    {
+        // Arrange
+        Config::set('sequencer.primary_key_type', 'uuid');
+        $model = new class extends Model {
+            use HasSequencerPrimaryKey;
+        };
+
+        // Act
+        $result = $model->getIncrementing();
+
+        // Assert
+        $this->assertFalse($result);
+    }
+
+    public function testGetKeyTypeReturnsStringForUuidType(): void
+    {
+        // Arrange
+        Config::set('sequencer.primary_key_type', 'uuid');
+        $model = new class extends Model {
+            use HasSequencerPrimaryKey;
+        };
+
+        // Act
+        $result = $model->getKeyType();
+
+        // Assert
+        $this->assertSame('string', $result);
+    }
+
+    public function testUniqueIdsReturnsKeyNameArrayForUuidType(): void
+    {
+        // Arrange
+        Config::set('sequencer.primary_key_type', 'uuid');
+        $model = new class extends Model {
+            use HasSequencerPrimaryKey;
+        };
+
+        // Act
+        $result = $model->uniqueIds();
+
+        // Assert
+        $this->assertSame(['id'], $result);
+    }
+
+    public function testNewUniqueIdGeneratesValidUuid(): void
+    {
+        // Arrange
+        Config::set('sequencer.primary_key_type', 'uuid');
+        $model = new class extends Model {
+            use HasSequencerPrimaryKey;
+        };
+
+        // Act
+        $result = $model->newUniqueId();
+
+        // Assert
+        $this->assertIsString($result);
+        $this->assertSame(36, strlen($result));
+        $this->assertMatchesRegularExpression('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/', $result);
+    }
+
+    public function testBootSetsUuidIfNotProvidedOnCreating(): void
+    {
+        // Arrange
+        Config::set('sequencer.primary_key_type', 'uuid');
+        $model = new class extends Model {
+            use HasSequencerPrimaryKey;
+
+            protected $fillable = ['name'];
+        };
+
+        // Act
+        $model->fireModelEvent('creating');
+
+        // Assert
+        $this->assertIsString($model->getKey());
+        $this->assertSame(36, strlen($model->getKey()));
+    }
+
+    public function testBootAcceptsPresetUuidString(): void
+    {
+        // Arrange
+        Config::set('sequencer.primary_key_type', 'uuid');
+        $presetUuid = '550e8400-e29b-41d4-a716-446655440000';
+        $model = new class extends Model {
+            use HasSequencerPrimaryKey;
+
+            protected $fillable = ['name'];
+        };
+        $model->setAttribute('id', $presetUuid);
+
+        // Act
+        $model->fireModelEvent('creating');
+
+        // Assert
+        $this->assertSame($presetUuid, $model->getKey());
+    }
+
+    public function testBootThrowsExceptionForNonStringUuid(): void
+    {
+        // Arrange
+        Config::set('sequencer.primary_key_type', 'uuid');
+        $model = new class extends Model {
+            use HasSequencerPrimaryKey;
+
+            protected $fillable = ['name'];
+        };
+        $model->setAttribute('id', 12345);
+
+        // Act & Assert
+        $this->expectException(InvalidPrimaryKeyValueException::class);
+        $this->expectExceptionMessage('Cannot assign non-string value to UUID primary key');
+        $model->fireModelEvent('creating');
+    }
+}

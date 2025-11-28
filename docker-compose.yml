@@ -1,0 +1,20 @@
+# To use:
+# Run "docker-compose build" to rebuild the app container.
+# Run "docker-compose run -u $(id -u ${USER}):$(id -g ${USER}) --rm php84 composer install" to install dependencies.
+# Run "docker-compose run  -u $(id -u ${USER}):$(id -g ${USER})--rm php84 vendor/bin/pest" to run the test script on 8.4.
+# Run "docker-compose down -v" to fully wipe everything and start over.
+# Run "docker-compose run -u $(id -u ${USER}):$(id -g ${USER}) --rm php84 bash" to log into the container to run tests selectively.
+services:
+    php84:
+        build: ./docker/php/84
+        mem_limit: 2g
+        volumes:
+            - ~/.composer:/.composer
+            - .:/usr/src/myapp
+            - ./docker/php/conf.d/error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini
+    profile:
+        build: ./docker/php/84
+        mem_limit: 2g
+        volumes:
+            - .:/usr/src/myapp
+            - ./docker/php/conf.d/error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini

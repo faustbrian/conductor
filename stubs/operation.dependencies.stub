@@ -1,0 +1,27 @@
+<?php
+
+use Cline\Sequencer\Contracts\HasDependencies;
+
+return new class implements HasDependencies
+{
+    /**
+     * Get the list of dependencies that must complete first.
+     *
+     * @return list<string>
+     */
+    public function dependsOn(): array
+    {
+        return [
+            // 'App\\Operations\\CreateUsersTable',
+            // '2024_01_15_000001_create_roles_table',
+        ];
+    }
+
+    /**
+     * Execute the operation.
+     */
+    public function handle(): void
+    {
+        //
+    }
+};

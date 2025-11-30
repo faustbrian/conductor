@@ -1,0 +1,22 @@
+<?php
+
+use Cline\Sequencer\Contracts\Rollbackable;
+
+return new class implements Rollbackable
+{
+    /**
+     * Execute the operation.
+     */
+    public function handle(): void
+    {
+        //
+    }
+
+    /**
+     * Rollback the operation.
+     */
+    public function rollback(): void
+    {
+        //
+    }
+};

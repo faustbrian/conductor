@@ -1,0 +1,22 @@
+<?php
+
+use Cline\Sequencer\Contracts\ConditionalExecution;
+
+return new class implements ConditionalExecution
+{
+    /**
+     * Determine whether the operation should execute.
+     */
+    public function shouldRun(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Execute the operation.
+     */
+    public function handle(): void
+    {
+        //
+    }
+};

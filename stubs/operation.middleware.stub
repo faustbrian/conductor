@@ -1,0 +1,28 @@
+<?php
+
+use Cline\Sequencer\Contracts\HasMiddleware;
+use Cline\Sequencer\Contracts\Operation;
+
+return new class implements Operation, HasMiddleware
+{
+    /**
+     * Get the middleware pipeline for this operation.
+     *
+     * @return array<object>
+     */
+    public function middleware(): array
+    {
+        return [
+            // new \Illuminate\Queue\Middleware\RateLimited('api'),
+            // new \Illuminate\Queue\Middleware\WithoutOverlapping('operation-key'),
+        ];
+    }
+
+    /**
+     * Execute the operation.
+     */
+    public function handle(): void
+    {
+        //
+    }
+};

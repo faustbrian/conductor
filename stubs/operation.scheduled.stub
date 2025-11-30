@@ -1,0 +1,23 @@
+<?php
+
+use Cline\Sequencer\Contracts\Scheduled;
+use DateTimeInterface;
+
+return new class implements Scheduled
+{
+    /**
+     * Get the scheduled execution time for this operation.
+     */
+    public function scheduledAt(): DateTimeInterface
+    {
+        return now()->addHour();
+    }
+
+    /**
+     * Execute the operation.
+     */
+    public function handle(): void
+    {
+        //
+    }
+};

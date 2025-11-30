@@ -1,0 +1,42 @@
+<?php
+
+use Cline\Sequencer\Contracts\Operation;
+use Cline\Sequencer\Contracts\Retryable;
+use DateTimeInterface;
+
+return new class implements Operation, Retryable
+{
+    /**
+     * Execute the operation.
+     */
+    public function handle(): void
+    {
+        //
+    }
+
+    /**
+     * Get the maximum number of execution attempts.
+     */
+    public function tries(): int
+    {
+        return 3;
+    }
+
+    /**
+     * Get the backoff delay in seconds between retry attempts.
+     *
+     * @return array<int>|int
+     */
+    public function backoff(): array|int
+    {
+        return [1, 5, 15];
+    }
+
+    /**
+     * Get the absolute deadline for retry attempts.
+     */
+    public function retryUntil(): ?DateTimeInterface
+    {
+        return null;
+    }
+};

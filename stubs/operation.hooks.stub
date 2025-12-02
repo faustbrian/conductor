@@ -1,0 +1,40 @@
+<?php
+
+use Cline\Sequencer\Contracts\HasLifecycleHooks;
+use Cline\Sequencer\Contracts\Operation;
+use Throwable;
+
+return new class implements Operation, HasLifecycleHooks
+{
+    /**
+     * Execute setup logic before the operation runs.
+     */
+    public function before(): void
+    {
+        //
+    }
+
+    /**
+     * Execute the operation.
+     */
+    public function handle(): void
+    {
+        //
+    }
+
+    /**
+     * Execute cleanup logic after successful completion.
+     */
+    public function after(): void
+    {
+        //
+    }
+
+    /**
+     * Handle operation failure.
+     */
+    public function failed(Throwable $exception): void
+    {
+        //
+    }
+};

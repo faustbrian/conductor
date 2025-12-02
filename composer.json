@@ -1,0 +1,105 @@
+{
+    "name": "cline/sequencer",
+    "description": "Sequential migration and operation orchestration for Laravel",
+    "license": "MIT",
+    "keywords": [
+        "php"
+    ],
+    "authors": [
+        {
+            "name": "Brian Faust",
+            "email": "brian@cline.sh"
+        }
+    ],
+    "require": {
+        "php": "^8.5.0",
+        "spatie/laravel-package-tools": "^1.92.7"
+    },
+    "require-dev": {
+        "cline/php-cs-fixer": "^1.2.1",
+        "driftingly/rector-laravel": "^2.1.4",
+        "ergebnis/composer-normalize": "^2.48.2",
+        "laravel/pint": "^1.26.0",
+        "laravel/pulse": "^1.4.4",
+        "laravel/telescope": "^5.15.1",
+        "orchestra/testbench": "^10.8",
+        "pestphp/pest": "^4.1.6",
+        "pestphp/pest-plugin-drift": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.0",
+        "pestphp/pest-plugin-type-coverage": "^4.0.3",
+        "phpstan/phpstan": "^2.1.32",
+        "rector/rector": "^2.2.9",
+        "symfony/var-dumper": "^7.4.0",
+        "timokoerber/laravel-one-time-operations": "^1.4.5"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Cline\\Sequencer\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Database\\Factories\\": "database/factories/",
+            "Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "ergebnis/composer-normalize": true,
+            "pestphp/pest-plugin": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Cline\\Sequencer\\SequencerServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "lint": "vendor/bin/php-cs-fixer fix",
+        "refactor": "rector",
+        "test": "@test:morphs",
+        "test:lint": "vendor/bin/php-cs-fixer check --diff",
+        "test:morphs": [
+            "@test:lint",
+            "@test:type-coverage",
+            "@test:unit",
+            "@test:types",
+            "@test:refactor"
+        ],
+        "test:numeric": [
+            "@test:lint",
+            "@test:type-coverage:numeric",
+            "@test:unit:numeric",
+            "@test:types",
+            "@test:refactor"
+        ],
+        "test:refactor": "rector --dry-run",
+        "test:type-coverage": "vendor/bin/pest --parallel --min=80 --type-coverage --configuration=phpunit.morphs.xml",
+        "test:type-coverage:numeric": "vendor/bin/pest --parallel --min=80 --type-coverage --configuration=phpunit.numeric.xml",
+        "test:type-coverage:ulid": "vendor/bin/pest --parallel --min=80 --type-coverage --configuration=phpunit.ulid.xml",
+        "test:type-coverage:uuid": "vendor/bin/pest --parallel --min=80 --type-coverage --configuration=phpunit.uuid.xml",
+        "test:types": "phpstan",
+        "test:ulid": [
+            "@test:lint",
+            "@test:type-coverage:ulid",
+            "@test:unit:ulid",
+            "@test:types",
+            "@test:refactor"
+        ],
+        "test:unit": "pest --parallel --min=80 --coverage --configuration=phpunit.morphs.xml",
+        "test:unit:numeric": "pest --parallel --min=80 --coverage --configuration=phpunit.numeric.xml",
+        "test:unit:ulid": "pest --parallel --min=80 --coverage --configuration=phpunit.ulid.xml",
+        "test:unit:uuid": "pest --parallel --min=80 --coverage --configuration=phpunit.uuid.xml",
+        "test:uuid": [
+            "@test:lint",
+            "@test:type-coverage:uuid",
+            "@test:unit:uuid",
+            "@test:types",
+            "@test:refactor"
+        ]
+    }
+}
